@@ -16,9 +16,17 @@ class IdentifyTenant
      */
     public function handle(Request $request, Closure $next): Response
     {
-         $subdomain = explode('.', $request->getHost())[0];
-         $tenant = Tenant::where('subdomain', $subdomain)->firstOrFail();
-         app()->instance(Tenant::class, $tenant);
-         return $next($request);
+         $host = $request->getHost();
+        $subdomain = explode('.', $host)[0];
+
+        $tenant = Tenant::where('subdomain', $subdomain)->first();
+
+        if (!$tenant) {
+            abort(403, 'Tenant not found');
+        }
+
+        app()->instance('currentTenant', $tenant);
+
+    return $next($request);
     }
 }

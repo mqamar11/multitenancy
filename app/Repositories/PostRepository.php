@@ -1,6 +1,10 @@
 <?php
+namespace App\Repositories;
+
 use App\Models\Tenant;
 use App\Models\Post;
+use App\Repositories\Contracts\PostRepositoryInterface;
+use Illuminate\Support\Facades\Auth;
 class PostRepository implements PostRepositoryInterface {
 
     protected $tenant;
@@ -10,7 +14,16 @@ class PostRepository implements PostRepositoryInterface {
     }
 
     public function getAll() {
-        return Post::where('tenant_id', $this->tenant->id)->get();
+        $tenantId = Auth::user()->tenant_id;
+        $posts =  Post::with('category')
+        ->where('tenant_id', $tenantId)
+        ->orderByDesc('created_at')
+        ->orderByDesc('created_by')
+        ->orderByDesc('updated_at')
+        ->orderByDesc('updated_by')
+        ->get();
+
+        return $posts;
     }
 
     public function find($id) {

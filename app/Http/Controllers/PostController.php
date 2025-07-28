@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\Contracts\PostRepositoryInterface;
 use Illuminate\Http\Request;
 use PostRepository;
 use Illuminate\Support\Facades\Auth;
 class PostController extends Controller
 {
-    public function __construct(private PostRepository $postRepo) {
-
+    protected $postRepo;
+    public function __construct(PostRepositoryInterface $postRepo) {
+        $this->postRepo = $postRepo;
     }
   public function index()
 {
@@ -32,7 +34,7 @@ class PostController extends Controller
     try {
         $validatedData = $request->validate([
             'title' => 'required|string',
-            'body' => 'required|string',
+            'content' => 'required|string',
             'category_id' => 'required|exists:categories,id',
         ]);
 
@@ -73,7 +75,7 @@ public function show($id)
     try {
         $validated = $request->validate([
             'title' => 'sometimes|string',
-            'body' => 'sometimes|string',
+            'content' => 'sometimes|string',
             'category_id' => 'sometimes|exists:categories,id',
         ]);
 
