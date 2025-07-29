@@ -38,7 +38,7 @@ class TenantSeeder extends Seeder
             'title' => 'Tenant One Post',
             'content' => 'This is a post by tenant one.',
             'tenant_id' => $tenant1->id,
-            'user_id' => $user1->id,
+            'created_by' => $user1->id,
             'category_id' => $category1->id,
         ]);
 
@@ -64,7 +64,7 @@ class TenantSeeder extends Seeder
             'title' => 'Tenant Two Post',
             'content' => 'This is a post by tenant two.',
             'tenant_id' => $tenant2->id,
-            'user_id' => $user2->id,
+            'created_by' => $user2->id,
             'category_id' => $category2->id,
         ]);
     }
