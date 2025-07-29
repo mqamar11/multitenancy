@@ -5,7 +5,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\CategoryController;
 
 // 👇 Grouped routes with middleware
-Route::middleware(['identifyTenant', 'auth:sanctum'])->group(function () {
+Route::middleware(['identifyTenant', 'auth'])->group(function () {
 
     Route::prefix('posts')->group(function () {
         Route::get('/', [PostController::class, 'index']);
