@@ -2,6 +2,7 @@ import './bootstrap'
 import { createApp } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
+import App from './App.vue' // ✅ This was missing!
 import PostList from './components/PostList.vue'
 import PostView from './components/PostView.vue'
 
@@ -15,6 +16,6 @@ const router = createRouter({
     routes,
 })
 
-const app = createApp({})
+const app = createApp(App) // ✅ mount App.vue here
 app.use(router)
 app.mount('#app')

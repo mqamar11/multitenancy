@@ -2,12 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Create Post</title>
+  <title>My Vue App</title>
   @vite('resources/js/app.js')
 </head>
 <body>
-  <div id="app">
-    <post-create></post-create>
-  </div>
+  <div id="app"></div> {{-- Vue mounts here --}}
 </body>
 </html>
