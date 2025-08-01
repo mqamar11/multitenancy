@@ -5,7 +5,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\CategoryController;
 
 // 👇 Grouped routes with middleware
-Route::middleware(['identifyTenant'])->group(function () {
+Route::middleware([])->group(function () {
 
     Route::prefix('posts')->group(function (): void {
         Route::get('/', [PostController::class, 'index']);

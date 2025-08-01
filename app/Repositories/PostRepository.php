@@ -16,7 +16,7 @@ class PostRepository implements PostRepositoryInterface {
     public function getAll() {
         // $tenantId = Auth::user()->tenant_id;
         $posts =  Post::with('category')
-        ->where('tenant_id',  tenant()->id)
+        ->where('tenant_id',  1)
         ->orderByDesc('created_at')
         ->orderByDesc('created_by')
         ->orderByDesc('updated_at')
