@@ -18,7 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'auth' => Authenticate::class,
             'auth:sanctum' => EnsureFrontendRequestsAreStateful::class,
-            'tenant' => IdentifyTenant::class,
+            'identifyTenant' => IdentifyTenant::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
