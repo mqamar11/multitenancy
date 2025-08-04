@@ -14,8 +14,8 @@ class Authenticate
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Auth::guard('web')->check()) {
-            return redirect()->route('login'); // make sure the 'login' route is defined
+       if (!Auth::check()) {
+            return response()->json(['message' => 'Unauthenticated.'], 401);
         }
 
         return $next($request);

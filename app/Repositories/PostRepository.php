@@ -31,7 +31,7 @@ class PostRepository implements PostRepositoryInterface {
     }
 
     public function create(array $data) {
-        $data['tenant_id'] = $this->tenant->id;
+        // $data['tenant_id'] = $this->tenant->id;
         return Post::create($data);
     }
 

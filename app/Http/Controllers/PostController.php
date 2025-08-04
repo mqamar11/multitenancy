@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Repositories\Contracts\PostRepositoryInterface;
 use Illuminate\Http\Request;
-use PostRepository;
 use Illuminate\Support\Facades\Auth;
 class PostController extends Controller
 {
@@ -36,9 +35,16 @@ class PostController extends Controller
             'title' => 'required|string',
             'content' => 'required|string',
             'category_id' => 'required|exists:categories,id',
+            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
+          if ($request->hasFile('featured_image')) {
+            $path = $request->file('featured_image')->store('posts', 'public');
+            $validatedData['featured_image'] = $path;
+        }
+
         $validatedData['created_by'] = Auth::id();
+        $validatedData['tenant_id'] = Auth::user()->tenant_id;
         $post = $this->postRepo->create($validatedData);
 
         return apiResponse(true, 'Post created successfully', $post);
