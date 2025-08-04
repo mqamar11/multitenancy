@@ -3,9 +3,9 @@ import { createApp } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 import App from './App.vue' // ✅ This was missing!
-import PostList from './components/PostList.vue'
-import PostView from './components/PostView.vue'
-import PostCreate from './components/PostCreate.vue'
+import PostList from './components/Post/PostList.vue'
+import PostView from './components/Post/PostView.vue'
+import PostCreate from './components/Post/PostCreate.vue'
 
 const routes = [
     { path: '/', component: PostList },
