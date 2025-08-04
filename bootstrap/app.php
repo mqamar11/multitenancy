@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Middleware\IdentifyTenant;
-use Illuminate\Auth\Middleware\Authenticate;
+use App\Http\Middleware\Authenticate;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -18,7 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'auth' => Authenticate::class,
             'auth:sanctum' => EnsureFrontendRequestsAreStateful::class,
-            'identifyTenant' => IdentifyTenant::class,
+            // 'identifyTenant' => IdentifyTenant::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

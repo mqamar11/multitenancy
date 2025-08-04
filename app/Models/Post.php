@@ -11,10 +11,18 @@ class Post extends Model
     ];
 
      public function category() {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
     public function tenant() {
-        return $this->belongsTo(Tenant::class);
+        return $this->belongsTo(Tenant::class, 'tenant_id');
+    }
+
+      public function creator() {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+      public function editor() {
+        return $this->belongsTo(User::class, 'updated_by');
     }
 }
