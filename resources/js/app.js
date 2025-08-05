@@ -7,13 +7,19 @@ import App from './App.vue'
 import PostList from './components/Post/PostList.vue'
 import PostView from './components/Post/PostView.vue'
 import PostCreate from './components/Post/PostCreate.vue'
+import Login from './components/auth/login.vue'
 
-axios.defaults.withCredentials = true
+// 💡 Use token-based header
+const token = localStorage.getItem('access_token')
+if (token) {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+}
 
 const routes = [
     { path: '/', component: PostList },
     { path: '/post/create', component: PostCreate, meta: { requiresAuth: true } },
     { path: '/posts/:id', component: PostView },
+    { path: '/login', component: Login },
 ]
 
 const router = createRouter({
@@ -28,10 +34,10 @@ router.beforeEach(async (to, from, next) => {
             if (response.data) {
                 next()
             } else {
-                next('/')
+                next('/login')
             }
         } catch (error) {
-            next('/')
+            next('/login')
         }
     } else {
         next()
