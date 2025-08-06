@@ -10,7 +10,8 @@ use App\Http\Controllers\CategoryController;
 Route::post('login', [AuthController::class, 'login']);
 // 👇 Grouped routes with middleware
 Route::middleware(('auth:sanctum'))->group(function () {
-
+Route::post('user', [AuthController::class, 'user']);
+Route::post('logout', [AuthController::class, 'logout']);
     Route::prefix('posts')->group(function (): void {
         Route::get('/list', action: [PostController::class, 'index']);
         Route::post('/save', [PostController::class, 'store']);

@@ -29,4 +29,26 @@ class AuthController extends Controller
             'user' => $user
         ]);
     }
+
+    public function user()
+    {
+        $user = Auth::user();
+
+         return response()->json([
+            'access_token' => $user,
+            'token_type' => 'Bearer',
+            'user' => $user
+        ]);
+    }
+
+    public function logout(Request $request)
+{
+    $request->user()->currentAccessToken()->delete();
+
+    return response()->json([
+        'message' => 'Successfully logged out'
+    ]);
+}
+
+
 }

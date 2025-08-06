@@ -19,7 +19,6 @@ class IdentifyTenant
          $host = $request->getHost();
         $subdomain = explode('.', $host)[0];
         $tenant = Tenant::where('subdomain', $subdomain)->first();
-        // dd($tenant);
         if (!$tenant) {
             abort(403, 'Tenant not found');
         }

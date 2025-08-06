@@ -1,72 +1,52 @@
 <template>
-  <div class="min-h-screen bg-gray-100 py-16 px-4">
-    <div class="w-full max-w-6xl mx-auto p-6 bg-white rounded-2xl shadow-lg">
+    <AppLayout>
+  <div class="page">
+    <div class="container">
       <!-- Header -->
-      <div class="flex justify-between items-center border-b pb-4 mb-4">
-        <h2 class="text-3xl font-bold text-gray-800">📚 Posts</h2>
-        <router-link
-          to="/post/create"
-          class="bg-blue-600 text-white px-5 py-2 rounded-xl hover:bg-blue-700 transition"
-        >
-          + Create Post
-        </router-link>
+      <div class="header">
+        <h2 class="heading">📚 Posts</h2>
+        <div class="actions">
+          <router-link to="/post/create" class="btn btn-blue">+ Create Post</router-link>
+          <!-- <button @click="logout" class="btn btn-red">Logout</button> -->
+        </div>
       </div>
 
       <!-- Loading / Empty State -->
-      <div v-if="loading" class="text-gray-500 text-center py-8">Loading...</div>
-      <div v-else-if="posts.length === 0" class="text-gray-500 text-center py-8">No posts found.</div>
+      <div v-if="loading" class="status">Loading...</div>
+      <div v-else-if="posts.length === 0" class="status">No posts found.</div>
 
       <!-- Posts Table -->
-      <div v-else class="overflow-x-auto">
-        <table class="min-w-full text-sm text-left text-gray-700 border border-gray-300 border-collapse table-auto">
-          <thead class="bg-gray-200 text-xs uppercase text-gray-600">
+      <div v-else class="table-wrapper">
+        <table class="post-table">
+          <thead>
             <tr>
-              <th class="px-4 py-3 border border-gray-300">Image</th>
-              <th class="px-4 py-3 border border-gray-300">Title</th>
-              <th class="px-4 py-3 border border-gray-300">Category</th>
-              <th class="px-4 py-3 border border-gray-300">Content</th>
-              <th class="px-4 py-3 border border-gray-300">Created By</th>
-              <th class="px-4 py-3 border border-gray-300">Updated By</th>
-              <th class="px-4 py-3 border border-gray-300">Action</th>
+              <th>Image</th>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Content</th>
+              <th>Created By</th>
+              <th>Updated By</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
-            <tr
-              v-for="post in posts"
-              :key="post.id"
-              class="bg-white hover:bg-gray-50"
-            >
-              <td class="px-4 py-2 border border-gray-300">
+            <tr v-for="post in posts" :key="post.id">
+              <td>
                 <img
                   v-if="post.featured_image"
                   :src="post.featured_image"
                   alt="Featured"
-                  class="w-16 h-16 object-cover rounded"
+                  class="thumbnail"
                 />
-                <span v-else class="text-gray-400 italic">No Image</span>
+                <span v-else class="no-image">No Image</span>
               </td>
-              <td class="px-4 py-2 border border-gray-300 font-medium text-gray-900">
-                {{ post.title }}
-              </td>
-              <td class="px-4 py-2 border border-gray-300">
-                {{ post.category?.name || 'Uncategorized' }}
-              </td>
-              <td class="px-4 py-2 border border-gray-300 max-w-xs truncate" :title="post.content">
-                {{ post.content }}
-              </td>
-              <td class="px-4 py-2 border border-gray-300">
-                {{ post.creator?.name || 'N/A' }}
-              </td>
-              <td class="px-4 py-2 border border-gray-300">
-                {{ post.editor?.name || 'N/A' }}
-              </td>
-              <td class="px-4 py-2 border border-gray-300">
-                <router-link
-                  :to="`/posts/${post.id}`"
-                  class="text-blue-600 hover:underline"
-                >
-                  View
-                </router-link>
+              <td class="bold">{{ post.title }}</td>
+              <td>{{ post.category?.name || 'Uncategorized' }}</td>
+              <td class="truncate" :title="post.content">{{ post.content }}</td>
+              <td>{{ post.creator?.name || 'N/A' }}</td>
+              <td>{{ post.editor?.name || 'N/A' }}</td>
+              <td>
+                <router-link :to="`/posts/${post.id}`" class="link">View</router-link>
               </td>
             </tr>
           </tbody>
@@ -74,31 +54,44 @@
       </div>
     </div>
   </div>
+  </AppLayout>
 </template>
 
 <script setup>
+import AppLayout from '../AppLayout.vue'
+import '../../../css/postList.css'
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import axios from 'axios'
 
 const posts = ref([])
 const loading = ref(true)
+const router = useRouter()
 
-onMounted(async () => {
+const fetchPosts = async () => {
   try {
-    const response = await axios.get('/api/posts')
+    const response = await axios.get('/api/posts/list')
     posts.value = response.data.data
   } catch (err) {
     console.error(err)
   } finally {
     loading.value = false
   }
+}
+
+const logout = async () => {
+  try {
+    await axios.post('/api/logout')
+    localStorage.removeItem('access_token')
+    delete axios.defaults.headers.common['Authorization']
+    router.push('/login')
+  } catch (error) {
+    console.error('Logout failed', error)
+  }
+}
+
+onMounted(() => {
+  fetchPosts()
 })
 </script>
 
-<style scoped>
-.truncate {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-</style>
