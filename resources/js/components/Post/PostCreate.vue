@@ -1,7 +1,7 @@
 <template>
     <AppLayout>
   <div class="form-wrapper">
-    <h2>Create New Post</h2>
+    <h2>{{ isEditMode ? 'Edit Post' : 'Create New Post' }}</h2>
     <form @submit.prevent="submitPost" enctype="multipart/form-data" class="post-form">
       <div class="form-group">
         <label for="category">Category</label>
@@ -27,7 +27,7 @@
         <input id="image" type="file" @change="handleFileUpload" />
       </div>
 
-      <button type="submit" class="submit-btn">Create Post</button>
+      <button type="submit" class="submit-btn">{{ isEditMode ? 'Update Post' : 'Create Post' }}</button>
     </form>
   </div>
     </AppLayout>
@@ -37,6 +37,7 @@
 import AppLayout from '../AppLayout.vue'
 import '../../../css/postCreate.css'
 import { ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import axios from 'axios'
 
 const form = ref({
@@ -46,6 +47,9 @@ const form = ref({
   featured_image: null,
 })
 
+
+const route = useRoute()
+const isEditMode = ref(false)
 const categories = ref([])
 
 const handleFileUpload = (e) => {
@@ -61,6 +65,21 @@ const fetchCategories = async () => {
   }
 }
 
+const fetchPostData = async () => {
+  try {
+    const res = await axios.get(`/api/posts/get/${route.params.id}`)
+    console.log('route', route.params.id)
+    console.log('res', res )
+    const data = res.data.data
+    console.log(data)
+    form.value.title = data.title
+    form.value.content = data.content
+    form.value.category_id = data.category_id
+  } catch (err) {
+    console.error('Failed to fetch post', err)
+  }
+}
+
 const submitPost = async () => {
   const payload = new FormData()
   payload.append('title', form.value.title)
@@ -71,9 +90,14 @@ const submitPost = async () => {
   }
 
   try {
-    await axios.post('/api/posts', payload)
-    alert('Post created successfully!')
-    // Reset form (optional)
+    if (isEditMode.value) {
+      await axios.post(`/api/posts/update/${route.params.id}?_method=PUT`, payload)
+      alert('Post updated successfully!')
+    } else {
+      await axios.post('/api/posts/save', payload)
+      alert('Post created successfully!')
+    }
+
     form.value = {
       title: '',
       content: '',
@@ -81,11 +105,18 @@ const submitPost = async () => {
       featured_image: null,
     }
   } catch (err) {
-    console.error('Error creating post:', err.response?.data)
-    alert('Failed to create post')
+    console.error('Error saving post:', err.response?.data)
+    alert('Failed to save post')
   }
 }
 
-onMounted(fetchCategories)
+onMounted(async () => {
+  await fetchCategories()
+  if (route.params.id) {
+    isEditMode.value = true
+    await fetchPostData()
+  }
+})
+
 </script>
 

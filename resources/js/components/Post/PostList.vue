@@ -46,7 +46,10 @@
               <td>{{ post.creator?.name || 'N/A' }}</td>
               <td>{{ post.editor?.name || 'N/A' }}</td>
               <td>
-                <router-link :to="`/posts/${post.id}`" class="link">View</router-link>
+                <!-- <router-link :to="`/posts/${post.id}`" class="link">View</router-link> -->
+                 <router-link :to="`/posts/${post.id}/edit`">
+                    <button class="edit-btn">Edit</button>
+                 </router-link>
               </td>
             </tr>
           </tbody>

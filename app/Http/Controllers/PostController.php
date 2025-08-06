@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Repositories\Contracts\PostRepositoryInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 class PostController extends Controller
 {
     protected $postRepo;
@@ -59,9 +60,9 @@ class PostController extends Controller
     }
 }
 
-public function show($id)
-{
-    try {
+    public function show($id)
+    {
+       try {
         $post = $this->postRepo->find($id);
 
         if (!$post) {
@@ -75,22 +76,39 @@ public function show($id)
     }
 }
 
-
-     public function update(Request $request, $id)
-{
+    public function update(Request $request, $id)
+    {
     try {
         $validated = $request->validate([
             'title' => 'sometimes|string',
             'content' => 'sometimes|string',
             'category_id' => 'sometimes|exists:categories,id',
+            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         $validated['updated_by'] = Auth::id();
 
+        if ($request->hasFile('featured_image')) {
+            $post = $this->postRepo->find($id);
+
+            if (!$post) {
+                return apiResponse(false, 'Post not found', [], 404);
+            }
+
+            if ($post->featured_image && Storage::disk('public')->exists($post->featured_image)) {
+                Storage::disk('public')->delete($post->featured_image);
+            }
+
+            // Store new image
+            $path = $request->file('featured_image')->store('posts', 'public');
+            $validated['featured_image'] = $path;
+        }
+
+        // Update post
         $updated = $this->postRepo->update($id, $validated);
 
         if (!$updated) {
-            return apiResponse(false, 'Post not found or not updated', [], 404);
+            return apiResponse(false, 'Post not updated', [], 404);
         }
 
         return apiResponse(true, 'Post updated successfully', $updated);
@@ -98,7 +116,9 @@ public function show($id)
     } catch (\Illuminate\Validation\ValidationException $e) {
         return apiResponse(false, 'Validation failed', $e->errors(), 422);
     } catch (\Throwable $e) {
-        return apiResponse(false, 'Something went wrong', ['error' => $e->getMessage()], 500);
+        return apiResponse(false, 'Something went wrong', [
+            'error' => $e->getMessage()
+        ], 500);
     }
 }
 
