@@ -13,4 +13,9 @@ class Category extends Model
             return $this->hasMany(Post::class);
         }
 
+        public function tenant()
+        {
+            return $this->belongsTo(Tenant::class, 'tenant_id');
+        }
+
 }

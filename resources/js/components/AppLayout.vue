@@ -1,9 +1,13 @@
-<!-- components/Layout.vue -->
 <template>
   <div class="layout-container">
     <header class="header">
+      <div class="nav-links">
+        <router-link to="/categories" class="nav-link">Categories</router-link>
+        <router-link to="/" class="nav-link">Posts</router-link>
+      </div>
       <button class="logout-btn" @click="logout">Logout</button>
     </header>
+
     <main class="content">
       <slot />
     </main>
@@ -14,6 +18,7 @@
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+
 function logout() {
   localStorage.removeItem('access_token')
   router.push('/login')
@@ -29,10 +34,27 @@ function logout() {
 
 .header {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   padding: 1rem;
   background-color: #f8f9fa;
   border-bottom: 1px solid #ccc;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1rem;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+}
+
+.nav-link:hover {
+  text-decoration: underline;
+  color: #007BFF;
 }
 
 .logout-btn {

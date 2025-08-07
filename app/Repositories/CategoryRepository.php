@@ -8,7 +8,7 @@ class CategoryRepository implements CategoryRepositoryInterface {
 
 public function all()
     {
-        return Category::orderBy('created_at', 'desc')->get();
+        return Category::with('tenant:id,name')->orderBy('created_at', 'desc')->get();
     }
 
     public function find($id)
