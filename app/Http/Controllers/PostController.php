@@ -15,7 +15,12 @@ class PostController extends Controller
   public function index()
 {
     try {
-        $posts = $this->postRepo->getAll();
+        $posts = $this->postRepo->getAll()->map(function($post){
+            if($post->featured_image){
+                $post->featured_image = asset('storage/'. $post->featured_image);
+            }
+            return $post;
+        });
 
         if ($posts->isEmpty()) {
             return apiResponse(false, 'No records found', [], 404);
@@ -36,7 +41,7 @@ class PostController extends Controller
             'title' => 'required|string',
             'content' => 'required|string',
             'category_id' => 'required|exists:categories,id',
-            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:20480',
         ]);
 
           if ($request->hasFile('featured_image')) {
@@ -83,7 +88,7 @@ class PostController extends Controller
             'title' => 'sometimes|string',
             'content' => 'sometimes|string',
             'category_id' => 'sometimes|exists:categories,id',
-            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:20480',
         ]);
 
         $validated['updated_by'] = Auth::id();

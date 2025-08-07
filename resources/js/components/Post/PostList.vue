@@ -42,14 +42,14 @@
               </td>
               <td class="bold">{{ post.title }}</td>
               <td>{{ post.category?.name || 'Uncategorized' }}</td>
-              <td class="truncate" :title="post.content">{{ post.content }}</td>
+            <td class="rich-snippet" :title="post.content" v-html="post.content"></td>
               <td>{{ post.creator?.name || 'N/A' }}</td>
               <td>{{ post.editor?.name || 'N/A' }}</td>
               <td>
-                <!-- <router-link :to="`/posts/${post.id}`" class="link">View</router-link> -->
                  <router-link :to="`/posts/${post.id}/edit`">
                     <button class="edit-btn">Edit</button>
                  </router-link>
+                 <button class="delete-btn" @click="deletePost(post.id)">Delete</button>
               </td>
             </tr>
           </tbody>
@@ -64,12 +64,10 @@
 import AppLayout from '../AppLayout.vue'
 import '../../../css/postList.css'
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 import axios from 'axios'
 
 const posts = ref([])
 const loading = ref(true)
-const router = useRouter()
 
 const fetchPosts = async () => {
   try {
@@ -82,16 +80,20 @@ const fetchPosts = async () => {
   }
 }
 
-const logout = async () => {
+const deletePost = async (id) => {
+  if (!confirm('Are you sure you want to delete this post?')) return;
+
   try {
-    await axios.post('/api/logout')
-    localStorage.removeItem('access_token')
-    delete axios.defaults.headers.common['Authorization']
-    router.push('/login')
+    await axios.delete(`/api/posts/delete/${id}`)
+    posts.value = posts.value.filter(post => post.id !== id)
+    alert('Post deleted successfully!')
   } catch (error) {
-    console.error('Logout failed', error)
+    console.error('Failed to delete post:', error)
+    alert('Failed to delete the post.')
   }
 }
+
+
 
 onMounted(() => {
   fetchPosts()

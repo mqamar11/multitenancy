@@ -67,3 +67,10 @@ textarea {
 .submit-btn:hover {
   background-color: #0056b3;
 }
+
+.tiptap-editor {
+  min-height: 200px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+}

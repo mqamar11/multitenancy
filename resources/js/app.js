@@ -3,6 +3,7 @@ import { createApp } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import axios from 'axios'
 
+
 import App from './App.vue'
 import Login from './components/auth/Login.vue'
 import CategoriesList from './components/Category/CategoriesList.vue'

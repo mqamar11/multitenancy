@@ -17,10 +17,21 @@
         <input id="title" type="text" v-model="form.title" required />
       </div>
 
-      <div class="form-group">
+      <!-- <div class="form-group">
         <label for="content">Content</label>
         <textarea id="content" v-model="form.content" required></textarea>
-      </div>
+      </div> -->
+
+      <div class="form-group">
+  <label for="content">Content</label>
+  <QuillEditor
+    v-model:content="form.content"
+    contentType="html"
+    theme="snow"
+    style="min-height: 200px;"
+  />
+</div>
+
 
       <div class="form-group">
         <label for="image">Featured Image</label>
@@ -38,6 +49,9 @@ import AppLayout from '../AppLayout.vue'
 import '../../../css/postCreate.css'
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.snow.css'
+
 import axios from 'axios'
 
 const form = ref({
