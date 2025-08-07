@@ -48,11 +48,12 @@
 import AppLayout from '../AppLayout.vue'
 import '../../../css/postCreate.css'
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 
 import axios from 'axios'
+
 
 const form = ref({
   title: '',
@@ -63,6 +64,8 @@ const form = ref({
 
 
 const route = useRoute()
+const router = useRouter()
+
 const isEditMode = ref(false)
 const categories = ref([])
 
@@ -111,6 +114,7 @@ const submitPost = async () => {
       await axios.post('/api/posts/save', payload)
       alert('Post created successfully!')
     }
+    router.push('/')
 
     form.value = {
       title: '',

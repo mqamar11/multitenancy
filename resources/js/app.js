@@ -7,6 +7,7 @@ import axios from 'axios'
 import App from './App.vue'
 import Login from './components/auth/Login.vue'
 import CategoriesList from './components/Category/CategoriesList.vue'
+import CategoryForm from './components/Category/CreateCategory.vue'
 import PostList from './components/Post/PostList.vue'
 import PostView from './components/Post/PostView.vue'
 import PostCreate from './components/Post/PostCreate.vue'
@@ -19,12 +20,16 @@ if (token) {
 }
 
 const routes = [
+    { path: '/login', component: Login },
+
     { path: '/categories', component: CategoriesList, meta: { requiresAuth: true } },
+    { path: '/categories/create', component: CategoryForm, meta: { requiresAuth: true } },
+    { path: '/categories/edit/:id', component: CategoryForm, meta: { requiresAuth: true } },
+
     { path: '/', component: PostList, meta: { requiresAuth: true } },
     { path: '/post/create', component: PostCreate, meta: { requiresAuth: true } },
     { path: '/posts/:id/edit', component: PostCreate, meta: { requiresAuth: true } },
     { path: '/posts/:id', component: PostView },
-    { path: '/login', component: Login },
 ]
 
 const router = createRouter({

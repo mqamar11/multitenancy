@@ -40,7 +40,7 @@ class CategoryController extends Controller
                 'name' => 'required|string|max:255',
             ]);
 
-            $validated['created_by'] = Auth::id();
+            $validated['tenant_id'] = Auth::user()->tenant_id;
 
             $category = $this->categoryRepo->create($validated);
 

@@ -5,7 +5,9 @@
         <!-- Header -->
         <div class="header">
           <h2 class="heading">📁 Categories</h2>
-          <!-- You can add a "Create Category" button later if needed -->
+          <div class="actions">
+            <router-link to="/categories/create" class="btn btn-blue">+ Create Category</router-link>
+          </div>
         </div>
 
         <!-- Loading / Empty State -->
@@ -19,12 +21,19 @@
               <tr>
                 <th>Name</th>
                 <th>Tenant</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="category in categories" :key="category.id">
                 <td class="bold">{{ category.name }}</td>
                 <td>{{ category.tenant?.name || category.tenant_id }}</td>
+                <td>
+                  <router-link :to="`/categories/edit/${category.id}`">
+                    <button class="edit-btn">Edit</button>
+                  </router-link>
+                  <button class="delete-btn" @click="deleteCategory(category.id)">Delete</button>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -36,7 +45,7 @@
 
 <script setup>
 import AppLayout from '../AppLayout.vue'
-import '../../../css/categoryList.css' // Reuse styles for layout/table
+import '../../../css/categoryList.css'
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 
@@ -51,6 +60,19 @@ const fetchCategories = async () => {
     console.error('Error fetching categories:', err)
   } finally {
     loading.value = false
+  }
+}
+
+const deleteCategory = async (id) => {
+  if (!confirm('Are you sure you want to delete this category?')) return
+
+  try {
+    await axios.delete(`/api/categories/delete/${id}`)
+    categories.value = categories.value.filter(cat => cat.id !== id)
+    alert('Category deleted successfully!')
+  } catch (error) {
+    console.error('Failed to delete category:', error)
+    alert('Failed to delete the category.')
   }
 }
 
