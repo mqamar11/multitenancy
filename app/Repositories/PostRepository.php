@@ -14,7 +14,9 @@ class PostRepository implements PostRepositoryInterface {
     }
 
     public function getAll() {
-        $tenantId = Auth::user()->tenant_id;
+        // $tenantId = Auth::user()->tenant_id;
+        $tenantId = tenant()->id;
+        // dd($tenantId);
         $posts =  Post::with(['category:id,name', 'creator:id,name', 'editor:id,name'])
         ->where('tenant_id', $tenantId  )
         ->orderByDesc('created_at')
@@ -27,12 +29,12 @@ class PostRepository implements PostRepositoryInterface {
     }
 
     public function find($id) {
-        return Post::where('tenant_id', Auth::user()->tenant_id)
+        return Post::where('tenant_id', tenant()->id)
         ->where('id', $id)->firstOrFail();
     }
 
     public function create(array $data) {
-        // $data['tenant_id'] = $this->tenant->id;
+        $data['tenant_id'] = tenant()->id;
         return Post::create($data);
     }
 

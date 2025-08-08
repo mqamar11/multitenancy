@@ -9,7 +9,7 @@ use App\Http\Controllers\CategoryController;
 
 Route::post('login', [AuthController::class, 'login']);
 // 👇 Grouped routes with middleware
-Route::middleware(('auth:sanctum'))->group(function () {
+Route::middleware(['auth:sanctum', 'identifyTenant'])->group(function () {
 Route::post('user', [AuthController::class, 'user']);
 Route::post('logout', [AuthController::class, 'logout']);
     Route::prefix('posts')->group(function (): void {

@@ -50,7 +50,6 @@ class PostController extends Controller
         }
 
         $validatedData['created_by'] = Auth::id();
-        $validatedData['tenant_id'] = Auth::user()->tenant_id;
         $post = $this->postRepo->create($validatedData);
 
         return apiResponse(true, 'Post created successfully', $post);
