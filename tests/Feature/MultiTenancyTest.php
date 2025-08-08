@@ -15,42 +15,44 @@ class MultiTenancyTest extends TestCase
     /**
      * A basic feature test example.
      */
-    public function test_posts_are_scoped_by_tenant()
-    {
-        // Create tenants
-        $foo = Tenant::factory()->create(['subdomain' => 'foo']);
-        $bar = Tenant::factory()->create(['subdomain' => 'bar']);
+public function test_posts_are_scoped_by_tenant()
+{
+    // Create tenants
+    $foo = Tenant::factory()->create(['subdomain' => 'foo']);
+    $bar = Tenant::factory()->create(['subdomain' => 'bar']);
 
-        // Create users for each tenant
-        $fooUser = User::factory()->create(['tenant_id' => $foo->id]);
-        $barUser = User::factory()->create(['tenant_id' => $bar->id]);
+    // Create users for each tenant
+    $fooUser = User::factory()->create(['tenant_id' => $foo->id]);
+    $barUser = User::factory()->create(['tenant_id' => $bar->id]);
 
-        // Create posts for each tenant
-        $fooPost = Post::factory()->create([
-            'tenant_id' => $foo->id,
-            'created_by' => $fooUser->id,
-        ]);
+    // Create posts for each tenant
+    $fooPost = Post::factory()->create([
+        'tenant_id' => $foo->id,
+        'created_by' => $fooUser->id,
+    ]);
 
-        $barPost = Post::factory()->create([
-            'tenant_id' => $bar->id,
-            'created_by' => $barUser->id,
-        ]);
+    $barPost = Post::factory()->create([
+        'tenant_id' => $bar->id,
+        'created_by' => $barUser->id,
+    ]);
 
-        // Simulate API request for foo tenant
-        $this->actingAs($fooUser, 'sanctum')
-            ->withServerVariables(['HTTP_HOST' => $foo->subdomain . '.tenant.test'])
-            ->getJson('/api/posts/list')
-            ->assertStatus(200)
-            ->assertJsonFragment(['id' => $fooPost->id])
-            ->assertJsonMissing(['id' => $barPost->id]);
+    // Use the full testing domain
+    $domain = config('app.domain') ?? 'tenant.test';
 
-        // Simulate API request for bar tenant
-        $this->actingAs($barUser, 'sanctum')
-            ->withServerVariables(['HTTP_HOST' => $bar->subdomain . '.tenant.test'])
-            ->getJson('/api/posts/list')
-            ->assertStatus(200)
-            ->assertJsonFragment(['id' => $barPost->id])
-            ->assertJsonMissing(['id' => $fooPost->id]);
-    }
+// For foo tenant
+$this->actingAs($fooUser)
+    ->getJson("http://foo.{$domain}/api/posts/list")
+    ->assertStatus(200)
+    ->assertJsonFragment(['id' => $fooPost->id])
+    ->assertJsonMissing(['id' => $barPost->id]);
 
+
+// For bar tenant
+$this->actingAs($barUser)
+    ->getJson("http://bar.{$domain}/api/posts/list")
+    ->assertStatus(200)
+    ->assertJsonFragment(['id' => $barPost->id])
+    ->assertJsonMissing(['id' => $fooPost->id]);
+
+}
 }

@@ -16,7 +16,15 @@ class IdentifyTenant
      */
     public function handle(Request $request, Closure $next): Response
     {
+        // dd([
+        //     'host' => $request->getHost(),
+        //     'http_host' => $request->server->get('HTTP_HOST'),
+        //     'server' => $request->server->get('SERVER_NAME'),
+        // ]);
          $host = $request->getHost();
+           if (app()->environment('testing')) {
+        $host = $request->server->get('HTTP_HOST') ?? $host;
+    }
         $subdomain = explode('.', $host)[0];
         $tenant = Tenant::where('subdomain', $subdomain)->first();
         if (!$tenant) {
