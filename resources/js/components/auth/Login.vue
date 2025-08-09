@@ -3,7 +3,15 @@
     <div class="login-card">
       <h2 class="title">Welcome Back</h2>
 
-      <form @submit.prevent="login" class="form">
+      <!-- loader -->
+      <div v-if="loading" class="loader">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
+      <form v-else @submit.prevent="login" class="form">
+        <!-- email -->
         <div class="form-group">
           <label for="email">Email</label>
           <input
@@ -15,6 +23,7 @@
           />
         </div>
 
+        <!-- password -->
         <div class="form-group">
           <label for="password">Password</label>
           <input
@@ -27,12 +36,12 @@
         </div>
 
         <button type="submit" class="login-button">Login</button>
-
         <p v-if="error" class="error-text">{{ error }}</p>
       </form>
     </div>
   </div>
 </template>
+
 
 <script>
 import '../../../css/login.css'
@@ -43,25 +52,32 @@ export default {
     return {
       email: '',
       password: '',
-      error: ''
+      error: '',
+      loading: false
     }
   },
   methods: {
-    async login() {
-      try {
-        const response = await axios.post('/api/login', {
-          email: this.email,
-          password: this.password
-        })
+ async login() {
+  this.loading = true
+  this.error = ''
 
-        const token = response.data.access_token
-        localStorage.setItem('access_token', token)
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-        this.$router.push('/')
-      } catch (err) {
-        this.error = 'Invalid credentials'
-      }
-    }
+  try {
+    const response = await axios.post('/api/login', {
+      email: this.email,
+      password: this.password
+    })
+
+    const token = response.data.access_token
+    localStorage.setItem('access_token', token)
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+    this.$router.push('/')
+  } catch (err) {
+    this.error = 'Invalid credentials'
+  } finally {
+    this.loading = false
+  }
+}
+
   }
 }
 </script>
