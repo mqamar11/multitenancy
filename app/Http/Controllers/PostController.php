@@ -127,14 +127,20 @@ class PostController extends Controller
 }
 
 
-    public function destroy($id)
+ public function destroy($id)
 {
     try {
-        $deleted = $this->postRepo->delete($id);
+        $post = $this->postRepo->find($id);
 
-        if (!$deleted) {
+        if (!$post) {
             return apiResponse(false, 'Post not found', [], 404);
         }
+
+        if ($post->featured_image && Storage::disk('public')->exists($post->featured_image)) {
+            Storage::disk('public')->delete($post->featured_image);
+        }
+
+        $this->postRepo->delete($id);
 
         return apiResponse(true, 'Post deleted successfully');
 
@@ -142,6 +148,7 @@ class PostController extends Controller
         return apiResponse(false, 'Something went wrong', ['error' => $e->getMessage()], 500);
     }
 }
+
 
 
 
